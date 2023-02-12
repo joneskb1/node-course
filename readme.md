@@ -1,3 +1,3 @@
 # natours app
 
-built using node.js, express, mongo db, mongoose :)
+built using node.js, express, mongo db, and mongoose :)
