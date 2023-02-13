@@ -45,3 +45,11 @@ process.on('unhandledRejection', (err) => {
     process.exit(1);
   });
 });
+
+// allows pending req to finish before shutting down
+process.on('SIGTERM', () => {
+  console.log('Gracefully shutting down');
+  server.close(() => {
+    console.log('process terminated');
+  });
+});

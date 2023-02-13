@@ -11,7 +11,7 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
   const cookieOptions = {
     expires: new Date(
@@ -21,7 +21,7 @@ const createSendToken = (user, statusCode, res) => {
     httpOnly: true,
   };
 
-  if (process.env.NODE_ENV === 'production') {
+  if (req.secure) {
     // only sent via https
     cookieOptions.secure = true;
   }
@@ -53,7 +53,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   const url = `${req.protocol}://${req.get('host')}/me`;
   await new Email(newUser, url).sendWelcome();
 
-  createSendToken(newUser, 201, res);
+  createSendToken(newUser, 201, req, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -71,7 +71,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 
   //send token to client
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 exports.logout = (req, res) => {
@@ -231,7 +231,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   // update changedpasswordat prop in model middleware
 
   // log the user in, send JWT
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -249,5 +249,5 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   // log user in with JWT
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
