@@ -52,11 +52,12 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // need body raw not in json
-app.post(
-  '/webhook-checkout',
-  express.raw({ type: 'application/json' }),
-  bookingController.webhookCheckout
-);
+// for prod
+// app.post(
+//   '/webhook-checkout',
+//   express.raw({ type: 'application/json' }),
+//   bookingController.webhookCheckout
+// );
 
 // body parser, reading data from body into req.body
 // parse cookies

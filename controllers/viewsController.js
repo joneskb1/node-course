@@ -4,6 +4,15 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const User = require('../models/userModel');
 
+//query is empty from createBookingCheckout
+exports.alerts = (req, res, next) => {
+  const { alert } = req.query;
+  if (alert === 'booking') {
+    res.locals.alert = 'Your booking was successful!';
+  }
+  next();
+};
+
 exports.getOverview = catchAsync(async (req, res, next) => {
   //get all tour data
   const tours = await Tour.find();

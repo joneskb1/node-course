@@ -17,9 +17,9 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     // need to use stripe web hooks in production
     success_url: `${req.protocol}://${req.get('host')}/?tour=${
       req.params.tourId
-    }&user=${req.user.id}&price=${tour.price}`,
+    }&user=${req.user.id}&price=${tour.price}&alert=booking`,
     //with web hooks:
-    // success_url: `${req.protocol}://${req.get('host')}/my-tours`
+    // success_url: `${req.protocol}://${req.get('host')}/my-tours?alert=booking`
     cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
     //prefill email in form
     customer_email: req.user.email,
@@ -35,6 +35,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
           product_data: {
             name: `${tour.name} Tour`,
             description: tour.summary,
+            // change for prod
             images: [`https://www.natours.dev/img/tours/${tour.imageCover}`],
           },
         },
@@ -81,7 +82,7 @@ exports.webhookCheckout = (req, res, next) => {
     return res.status(400).send(`webhook error": ${err.message}`);
   }
 
-  if (event.type === 'checkout-session.complete') {
+  if (event.type === 'checkout-session.completed') {
     createBookingCheckoutWebhook(event.data.object);
   }
 
