@@ -54,7 +54,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   });
 });
 
-//comment out this function everywhere when using webhooks
+// comment out this function everywhere when using webhooks
 // exports.createBookingCheckout = catchAsync(async (req, res, next) => {
 //   // temp due to unsecure! ppl can make bookings w/o paying
 //   // need to use stripe web hooks in production
@@ -67,11 +67,16 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 // });
 
 const createBookingCheckoutWebhook = async (session) => {
-  const tour = session.client_reference_id;
-  const user = await User.findOne({ email: session.customer_email })._id;
-  // const price = session.line_items[0].price_data.unit_amount / 100;
-  const price = session.amount_total / 100;
-  await Booking.create({ tour, user, price });
+  try {
+    const tour = session.client_reference_id;
+    const user = await User.findOne({ email: session.customer_email })._id;
+    // const price = session.line_items[0].price_data.unit_amount / 100;
+    const price = session.amount_total / 100;
+    console.log(tour, user, price);
+    await Booking.create({ tour, user, price });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 exports.webhookCheckout = (req, res, next) => {
