@@ -15,11 +15,11 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     mode: 'payment',
     //this URL ins't secure sending data in url
     // need to use stripe web hooks in production
-    success_url: `${req.protocol}://${req.get('host')}/?tour=${
-      req.params.tourId
-    }&user=${req.user.id}&price=${tour.price}&alert=booking`,
+    // success_url: `${req.protocol}://${req.get('host')}/?tour=${
+    //   req.params.tourId
+    // }&user=${req.user.id}&price=${tour.price}&alert=booking`,
     //with web hooks:
-    // success_url: `${req.protocol}://${req.get('host')}/my-tours?alert=booking`
+    success_url: `${req.protocol}://${req.get('host')}/my-tours?alert=booking`,
     cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
     //prefill email in form
     customer_email: req.user.email,
@@ -51,16 +51,16 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 });
 
 //comment out this function everywhere when using webhooks
-exports.createBookingCheckout = catchAsync(async (req, res, next) => {
-  // temp due to unsecure! ppl can make bookings w/o paying
-  // need to use stripe web hooks in production
-  const { tour, user, price } = req.query;
-  if (!tour && !user && !price) return next();
-  //create booking doc
-  await Booking.create({ tour, user, price });
-  //remove query from URL for security
-  res.redirect(req.originalUrl.split('?')[0]);
-});
+// exports.createBookingCheckout = catchAsync(async (req, res, next) => {
+//   // temp due to unsecure! ppl can make bookings w/o paying
+//   // need to use stripe web hooks in production
+//   const { tour, user, price } = req.query;
+//   if (!tour && !user && !price) return next();
+//   //create booking doc
+//   await Booking.create({ tour, user, price });
+//   //remove query from URL for security
+//   res.redirect(req.originalUrl.split('?')[0]);
+// });
 
 const createBookingCheckoutWebhook = async (session) => {
   const tour = session.client_reference_id;
