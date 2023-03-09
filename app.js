@@ -67,6 +67,7 @@ app.use(
   })
 );
 app.use(cookieParser());
+// to parse data from form submit via action (not using api)
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 //clean body data, data sanitization against NoSQL query injection

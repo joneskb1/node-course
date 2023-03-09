@@ -58,7 +58,7 @@ userSchema.pre('save', async function (next) {
   }
   // encrypt password, cost num => higher is better protection but takes longer to run
   this.password = await bcrypt.hash(this.password, 12);
-  // delete passwordConfirm, don't store in db
+  // reset passwordConfirm, don't store in db
   this.passwordConfirm = undefined;
   next();
 });
